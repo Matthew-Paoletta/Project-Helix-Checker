@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "description": "Helix validation rules from chunk-1 + chunk-2 + chunk-3 docs.",
+  "version": 5,
+  "description": "Helix validation rules from chunk-1..4 extracted docs.",
   "commit_message": {
     "required_regex": [
       "^\\[(sol|f2p|meta|dep)\\]\\s+.+"
@@ -43,6 +43,13 @@
       "FAIL_TO_PASS",
       "PASS_TO_PASS"
     ],
+    "metadata_forbidden_values_case_insensitive": [
+      "",
+      "todo",
+      "n/a",
+      "handshake",
+      "placeholder"
+    ],
 
     "test_path_must_match_regex": "(test|tests|_test\\.|\\.spec\\.|\\.test\\.)",
 
@@ -64,11 +71,16 @@
       "git",
       "ca-certificates"
     ],
+    "dockerfile_should_include_regex": [
+      "git\\s+config\\s+--unset-all\\s+http\\.https://github\\.com/\\.extraheader\\s*\\|\\|\\s*true"
+    ],
+
     "run_tests_eval_forbidden_regex": [
       "\\bdocker\\s+run\\b",
       "\\bdocker\\s+build\\b",
       "\\bdocker\\s+exec\\b"
     ],
+    "run_tests_eval_should_be_executable": true,
 
     "golden_solution_forbidden_paths_regex": [
       "^\\.helix/Dockerfile\\.helix$",
@@ -81,18 +93,23 @@
       "\\.spec\\.",
       "\\.test\\."
     ],
-
     "f2p_commit_required_test_path_regex": [
       "(^|/)tests?/",
       "_test\\.",
       "\\.spec\\.",
       "\\.test\\."
     ],
+    "meta_commit_allowed_paths_regex": [
+      "^\\.helix/metadata\\.json$"
+    ],
 
     "f2p_weak_test_forbidden_regex": [
       "assert\\s+hasattr\\(",
       "is\\s+not\\s+None\\s*$",
       "^\\s*from\\s+.+\\s+import\\s+.+\\s*$"
-    ]
+    ],
+
+    "golden_pr_title_required_prefix": "[GOLDEN SOLUTION]",
+    "docker_pr_title_required_prefix": "[DOCKER SEEDING]"
   }
 }

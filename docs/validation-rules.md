@@ -1,6 +1,6 @@
 # Project Helix Validation Rules (derived from source PDFs)
 
-Version: 3
+Version: 4
 Last updated: 2026-05-18
 
 ## Scope
@@ -9,7 +9,7 @@ These rules validate Helix submissions for:
 - commit-shape requirements
 - .helix environment-setup constraints
 - metadata completeness
-- F2P behavioral quality constraints
+- F2P/P2P quality and branch/PR hygiene signals
 
 ## Decision outcomes
 - VALID: all blocking rules pass
@@ -46,17 +46,21 @@ In `.helix/metadata.json`, required:
 - FAIL_TO_PASS
 - PASS_TO_PASS
 
-### R-007 Test path plausibility
+### R-007 Metadata placeholder rejection
+Reject placeholder-like metadata values:
+- "", "TODO", "N/A", "handshake", "placeholder"
+
+### R-008 Test path plausibility
 FAIL_TO_PASS and PASS_TO_PASS should contain plausible test paths.
 
-### R-008 .helix folder strict contents
+### R-009 .helix folder strict contents
 `.helix/` must contain only:
 - Dockerfile.helix
 - run-tests-eval.sh
 - metadata.json
 
-### R-009 Env-setup PR path scope allowlist
-Changed files for env setup must be within:
+### R-010 Env-setup PR path scope allowlist
+Env-setup scope must remain within:
 - .helix/Dockerfile.helix
 - .helix/run-tests-eval.sh
 - .helix/metadata.json
@@ -64,34 +68,53 @@ Changed files for env setup must be within:
 - .github/workflows/golden-solution-validation.yml
 - .github/workflows/helix-validation.yml
 
-### R-010 Dockerfile mandatory deps
+### R-011 Dockerfile mandatory deps
 `.helix/Dockerfile.helix` must include:
 - git
 - ca-certificates
 
-### R-011 run-tests-eval behavior
+### R-012 Dockerfile auth hardening line
+Dockerfile should include:
+`git config --unset-all http.https://github.com/.extraheader || true`
+
+### R-013 run-tests-eval behavior
 `.helix/run-tests-eval.sh` must:
 - run all tests with no args
 - run provided comma-separated test paths with args
 - not invoke docker commands directly
+- be executable (mode 100755 expectation)
 
-### R-012 Golden-solution Docker immutability
+### R-014 Golden-solution Docker immutability
 On `golden-solution` work, solution commits must not modify:
 - .helix/Dockerfile.helix
 - .helix/run-tests-eval.sh
 
-### R-013 [sol] commit scope
-`[sol]` commit should contain feature code only (no new tests).
+### R-015 [sol] commit scope
+`[sol]` commit should contain feature code only (no tests).
 
-### R-014 [f2p] commit scope
-`[f2p]` commit should contain test additions/changes only.
+### R-016 [f2p] commit scope
+`[f2p]` commit should contain test changes only.
 
-### R-015 F2P ordering
-`[sol]` must appear before `[f2p]`.
+### R-017 [meta] commit scope
+`[meta]` commit should contain metadata updates only.
 
-### R-016 F2P anti-pattern blocking
-Reject if test content appears to be symbol-existence-only tests
-(e.g., pure import/hasattr existence checks without behavioral assertions).
+### R-018 Commit order
+Expected order:
+- [dep] optional first
+- [sol]
+- [f2p]
+- [meta]
+
+### R-019 F2P anti-pattern blocking
+Reject weak symbol-existence-only test patterns lacking behavioral assertions.
+
+### R-020 Golden PR title policy
+Golden-solution PR title should start with:
+- [GOLDEN SOLUTION]
+
+### R-021 Docker-seeding PR title policy
+Docker-seeding PR title should start with:
+- [DOCKER SEEDING]
 
 ## Human-review rules (non-blocking)
 
@@ -102,7 +125,19 @@ Clear/model-readable and no PR/git leakage.
 Same task, less precise, reduced symbol leakage.
 
 ### H-003 Hints quality
-Signposts only; no blueprint-style implementation instructions.
+Signposts only; no blueprint-style implementation steps.
 
 ### H-004 F2P breadth & behavior
-F2P should map to prompt-stated behaviors and include meaningful behavioral checks.
+F2P should map to prompt behaviors and include meaningful behavioral checks.
+
+### H-005 PR description quality
+PR description should cover:
+- Problem
+- Approach
+- Testing strategy
+
+### H-006 CI status discipline
+Do not submit/merge while required checks are pending/failed.
+
+### H-007 Troubleshooting triage
+When validation fails, use failed job logs to identify exact failing step and remediate before resubmission.
