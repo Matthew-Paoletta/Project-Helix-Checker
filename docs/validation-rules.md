@@ -1,64 +1,91 @@
 # Project Helix Validation Rules (derived from source PDFs)
 
-Version: 1
+Version: 2
 Last updated: 2026-05-18
 
 ## Scope
-These rules validate Helix submissions for commit shape, metadata quality signals, and test-path integrity.
+These rules validate Helix submissions for:
+- Task validity guardrails
+- Commit-shape requirements
+- .helix environment-setup constraints
+- metadata completeness
+- test-path integrity
 
 ## Decision outcomes
-- VALID: all blocking rules pass.
-- INVALID: one or more blocking rules fail.
-- NEEDS_HUMAN_REVIEW: deterministic checks pass, but qualitative checks require reviewer judgment.
+- VALID: all blocking rules pass
+- INVALID: one or more blocking rules fail
+- NEEDS_HUMAN_REVIEW: deterministic checks pass, but quality/judgment checks remain
 
 ## Blocking rules (machine-enforced)
 
 ### R-001 Commit prefix format
-Each commit message should start with one of:
-- [sol]
-- [f2p]
-- [meta]
-- [dep] (optional baseline dependency commit)
+Each commit message must start with:
+- [sol], [f2p], [meta], or [dep]
 
 ### R-002 Required commit types
-Submission must include at least one commit with each:
-- [sol]
-- [f2p]
-- [meta]
+Submission must include at least one:
+- [sol], [f2p], [meta]
 
 ### R-003 Commit count bounds
-Expected total commit count in evaluated range:
-- minimum: 3
-- maximum: 4 (optional [dep])
+Total commits in evaluated range must be:
+- min 3, max 4 (optional [dep])
 
-### R-004 Metadata file required
+### R-004 Real-logic LOC guardrail
+Expected changed lines:
+- recommended: 25–500
+- hard validator bounds: 25–1000
+
+### R-005 Required metadata file
 `.helix/metadata.json` must exist.
 
-### R-005 Metadata fields required
-`.helix/metadata.json` must contain non-empty:
+### R-006 Required metadata fields non-empty
+In `.helix/metadata.json`, required:
 - problem_statement
 - problem_statement_variant
 - hints
 - FAIL_TO_PASS
 - PASS_TO_PASS
 
-### R-006 Test path plausibility
-FAIL_TO_PASS and PASS_TO_PASS should reference plausible test files
-(e.g., contain test/tests, or suffix .spec/.test/_test).
+### R-007 Test path plausibility
+FAIL_TO_PASS and PASS_TO_PASS should contain plausible test paths.
 
-### R-007 Meaningful change-size guardrail
-Total changed lines should generally be at least 25 and no more than 1000.
+### R-008 .helix folder strict contents
+`.helix/` must contain only:
+- Dockerfile.helix
+- run-tests-eval.sh
+- metadata.json
+
+### R-009 Env-setup PR path scope allowlist
+Changed files for env setup must be within:
+- .helix/Dockerfile.helix
+- .helix/run-tests-eval.sh
+- .helix/metadata.json
+- .github/workflows/build-push-gar.yml
+- .github/workflows/golden-solution-validation.yml
+- .github/workflows/helix-validation.yml
+
+### R-010 Dockerfile mandatory deps
+`.helix/Dockerfile.helix` must include:
+- git
+- ca-certificates
+(via apt-get/apk patterns)
+
+### R-011 run-tests-eval behavior
+`.helix/run-tests-eval.sh` must:
+- run all tests with no args
+- run provided comma-separated test paths with args
+- never invoke docker commands directly
 
 ## Human-review rules (non-blocking)
 
 ### H-001 Problem statement quality
-Must be model-readable, specific, and avoid PR/git leakage.
+Clear/model-readable and no PR/git leakage.
 
 ### H-002 Variant quality
-Same task, less precise phrasing, reduced symbol leakage, shorter than main statement.
+Same task, less precise, less symbol leakage.
 
 ### H-003 Hints quality
-Hints should be signposts (paths/symbols/errors), not implementation blueprint.
+Signposts only; no blueprint-style fix instructions.
 
 ### H-004 F2P depth quality
-F2P should test behavior, not symbol existence only.
+Behavioral checks, not trivial symbol existence checks.

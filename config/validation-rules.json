@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "description": "Helix-derived validation rules from chunk-1 documents (Metadata, Core Workflow, Guidelines, Platform Basics).",
+  "version": 3,
+  "description": "Helix validation rules from chunk-1 + chunk-2 documents.",
   "commit_message": {
     "required_regex": [
       "^\\[(sol|f2p|meta|dep)\\]\\s+.+"
@@ -20,6 +20,7 @@
   },
   "diff_limits": {
     "min_total_changes": 25,
+    "recommended_max_total_changes": 500,
     "max_total_changes": 1000,
     "max_additions": 50000,
     "max_deletions": 50000
@@ -40,6 +41,28 @@
       "FAIL_TO_PASS",
       "PASS_TO_PASS"
     ],
-    "test_path_must_match_regex": "(test|tests|_test\\.|\\.spec\\.|\\.test\\.)"
+    "test_path_must_match_regex": "(test|tests|_test\\.|\\.spec\\.|\\.test\\.)",
+    "helix_required_files": [
+      ".helix/Dockerfile.helix",
+      ".helix/run-tests-eval.sh",
+      ".helix/metadata.json"
+    ],
+    "env_setup_allowed_paths": [
+      ".helix/Dockerfile.helix",
+      ".helix/run-tests-eval.sh",
+      ".helix/metadata.json",
+      ".github/workflows/build-push-gar.yml",
+      ".github/workflows/golden-solution-validation.yml",
+      ".github/workflows/helix-validation.yml"
+    ],
+    "dockerfile_must_include_regex": [
+      "git",
+      "ca-certificates"
+    ],
+    "run_tests_eval_forbidden_regex": [
+      "\\bdocker\\s+run\\b",
+      "\\bdocker\\s+build\\b",
+      "\\bdocker\\s+exec\\b"
+    ]
   }
 }
