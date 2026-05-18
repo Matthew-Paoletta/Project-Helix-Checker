@@ -1,0 +1,23 @@
+name: Validate Commit
+on:
+  workflow_dispatch:
+    inputs:
+      commit_sha:
+        description: "Commit SHA to validate"
+        required: true
+        type: string
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: Run commit validation
+        env: { GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} }
+        run: |
+          python3 scripts/validate_commit.py --repo ${{ github.repository }} --commit "${{ inputs.commit_sha }}" | tee validation-result.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validation-result-${{ inputs.commit_sha }}
+          path: validation-result.json

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "description": "Starter rules for commit validation.",
+  "commit_message": { "required_regex": [".+"], "forbidden_regex": [] },
+  "changed_files": {
+    "forbidden_path_regex": ["^.*\\.pem$", "^.*\\.key$", "^secrets?/.*"],
+    "required_path_regex": [],
+    "max_files_changed": 500
+  },
+  "diff_limits": { "max_additions": 50000, "max_deletions": 50000 },
+  "author": { "allowed_logins": [] }
+}
