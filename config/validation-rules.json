@@ -1,12 +1,45 @@
 {
-  "version": 1,
-  "description": "Starter rules for commit validation.",
-  "commit_message": { "required_regex": [".+"], "forbidden_regex": [] },
-  "changed_files": {
-    "forbidden_path_regex": ["^.*\\.pem$", "^.*\\.key$", "^secrets?/.*"],
-    "required_path_regex": [],
-    "max_files_changed": 500
+  "version": 2,
+  "description": "Helix-derived validation rules from chunk-1 documents (Metadata, Core Workflow, Guidelines, Platform Basics).",
+  "commit_message": {
+    "required_regex": [
+      "^\\[(sol|f2p|meta|dep)\\]\\s+.+"
+    ],
+    "forbidden_regex": []
   },
-  "diff_limits": { "max_additions": 50000, "max_deletions": 50000 },
-  "author": { "allowed_logins": [] }
+  "changed_files": {
+    "forbidden_path_regex": [
+      "^.*\\.pem$",
+      "^.*\\.key$",
+      "^secrets?/.*"
+    ],
+    "required_path_regex": [
+      "^\\.helix/metadata\\.json$"
+    ],
+    "max_files_changed": 800
+  },
+  "diff_limits": {
+    "min_total_changes": 25,
+    "max_total_changes": 1000,
+    "max_additions": 50000,
+    "max_deletions": 50000
+  },
+  "author": {
+    "allowed_logins": []
+  },
+  "helix": {
+    "required_commit_prefixes": ["sol", "f2p", "meta"],
+    "allowed_commit_prefixes": ["sol", "f2p", "meta", "dep"],
+    "min_commit_count": 3,
+    "max_commit_count": 4,
+    "metadata_file": ".helix/metadata.json",
+    "metadata_required_fields": [
+      "problem_statement",
+      "problem_statement_variant",
+      "hints",
+      "FAIL_TO_PASS",
+      "PASS_TO_PASS"
+    ],
+    "test_path_must_match_regex": "(test|tests|_test\\.|\\.spec\\.|\\.test\\.)"
+  }
 }
