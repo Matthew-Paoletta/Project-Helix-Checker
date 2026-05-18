@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "description": "Helix validation rules from chunk-1 + chunk-2 documents.",
+  "version": 4,
+  "description": "Helix validation rules from chunk-1 + chunk-2 + chunk-3 docs.",
   "commit_message": {
     "required_regex": [
       "^\\[(sol|f2p|meta|dep)\\]\\s+.+"
@@ -33,6 +33,8 @@
     "allowed_commit_prefixes": ["sol", "f2p", "meta", "dep"],
     "min_commit_count": 3,
     "max_commit_count": 4,
+    "required_commit_order": ["sol", "f2p", "meta"],
+
     "metadata_file": ".helix/metadata.json",
     "metadata_required_fields": [
       "problem_statement",
@@ -41,7 +43,9 @@
       "FAIL_TO_PASS",
       "PASS_TO_PASS"
     ],
+
     "test_path_must_match_regex": "(test|tests|_test\\.|\\.spec\\.|\\.test\\.)",
+
     "helix_required_files": [
       ".helix/Dockerfile.helix",
       ".helix/run-tests-eval.sh",
@@ -55,6 +59,7 @@
       ".github/workflows/golden-solution-validation.yml",
       ".github/workflows/helix-validation.yml"
     ],
+
     "dockerfile_must_include_regex": [
       "git",
       "ca-certificates"
@@ -63,6 +68,31 @@
       "\\bdocker\\s+run\\b",
       "\\bdocker\\s+build\\b",
       "\\bdocker\\s+exec\\b"
+    ],
+
+    "golden_solution_forbidden_paths_regex": [
+      "^\\.helix/Dockerfile\\.helix$",
+      "^\\.helix/run-tests-eval\\.sh$"
+    ],
+
+    "sol_commit_forbidden_test_path_regex": [
+      "(^|/)tests?/",
+      "_test\\.",
+      "\\.spec\\.",
+      "\\.test\\."
+    ],
+
+    "f2p_commit_required_test_path_regex": [
+      "(^|/)tests?/",
+      "_test\\.",
+      "\\.spec\\.",
+      "\\.test\\."
+    ],
+
+    "f2p_weak_test_forbidden_regex": [
+      "assert\\s+hasattr\\(",
+      "is\\s+not\\s+None\\s*$",
+      "^\\s*from\\s+.+\\s+import\\s+.+\\s*$"
     ]
   }
 }
